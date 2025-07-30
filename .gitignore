@@ -25,3 +25,4 @@
 .externalNativeBuild
 .cxx
 local.properties
+.emulator_name

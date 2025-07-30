@@ -111,16 +111,49 @@ archive:
 	./gradlew bundleRelease
 
 # === テスト ===
+select-emulator:
+	@echo "▶️ Selecting the first available emulator..."
+	@AVD_NAME=$("$ANDROID_HOME"/emulator/emulator -list-avds | head -n 1 | tr -d '\r'); \
+	if [ -z "$AVD_NAME" ]; then \
+		echo "❌ Error: No AVDs found. Please create an emulator AVD first."; \
+		exit 1; \
+	fi; \
+	echo "✅ Selected emulator: $AVD_NAME"; \
+	echo "$AVD_NAME" > .emulator_name
+
 unit-test:
 	@echo "▶️ Running unit tests..."
 	./gradlew testDebugUnitTest
 
 ui-test:
 	@echo "▶️ Running UI (instrumented) tests..."
-	./gradlew connectedDebugAndroidTest
+	@if [ ! -f .emulator_name ]; then \
+		echo "❌ Error: Emulator not selected. Please run 'make select-emulator' first."; \
+		exit 1; \
+	fi
+	@AVD_NAME=$(cat .emulator_name); \
+	echo "🚀 Booting emulator: $AVD_NAME..."; \
+	nohup "$ANDROID_HOME"/emulator/emulator -avd "$AVD_NAME" -no-snapshot -no-window > /dev/null 2>&1 & \
+	EMULATOR_PID=$!; \
+	trap 'echo "\n🛑 Shutting down emulator (PID: $EMULATOR_PID)..."; kill $EMULATOR_PID; rm -f .emulator_name' EXIT; \
+	echo "⏳ Waiting for emulator to connect..."; \
+	"$ANDROID_HOME"/platform-tools/adb wait-for-device; \
+	echo "⏳ Waiting for emulator to be fully booted..."; \
+	timeout=180; \
+	while [ "`"$ANDROID_HOME"/platform-tools/adb" shell getprop sys.boot_completed | tr -d '\r\n'`" != "1" ]; do \
+		if [ $timeout -le 0 ]; then \
+			echo "\n❌ Error: Timed out waiting for emulator to boot."; \
+			exit 1; \
+		fi; \
+		sleep 2; \
+		timeout=$((timeout-2)); \
+	done; \
+	echo "✅ Emulator is online."; \
+	echo "🔬 Running Gradle tests..."; \
+	./gradlew connectedDebugAndroidTest; \
+	echo "✅ UI tests completed successfully."
 
 test-all: unit-test ui-test
-	@echo "✅ All tests completed."
 
 # === Code Style ===
 format:
