@@ -52,8 +52,6 @@ endif
 		emulator -list-avds; \
 		exit 1; \
 	fi
-
-run-debug: boot
 	@echo "⏳ Waiting for emulator to be fully booted..."
 	@timeout=120; \
 	while [ "`adb -e shell getprop sys.boot_completed | tr -d '\r\n'`" != "1" ]; do \
@@ -65,6 +63,8 @@ run-debug: boot
 		timeout=$$((timeout-2)); \
 	done;
 	@echo "✅ Emulator is online."
+
+run-debug: boot
 	@echo "▶️ Building, installing, and launching debug build..."
 	./gradlew installDebug
 	@echo "🚀 Launching app..."
@@ -72,17 +72,6 @@ run-debug: boot
 	@echo "✅ App launched."
 
 run-release: boot
-	@echo "⏳ Waiting for emulator to be fully booted..."
-	@timeout=120; \
-	while [ "`adb -e shell getprop sys.boot_completed | tr -d '\r\n'`" != "1" ]; do \
-		if [ $$timeout -le 0 ]; then \
-			echo "\n❌ Error: Timed out waiting for emulator to boot."; \
-			exit 1; \
-		fi; \
-		sleep 2; \
-		timeout=$$((timeout-2)); \
-	done;
-	@echo "✅ Emulator is online."
 	@echo "▶️ Building, installing, and launching release build..."
 	./gradlew installRelease
 	@echo "🚀 Launching app..."
@@ -126,34 +115,11 @@ unit-test:
 	./gradlew testDebugUnitTest
 
 ui-test:
-	@echo "▶️ Running UI (instrumented) tests..."
-	@if [ ! -f .emulator_name ]; then \
-		echo "❌ Error: Emulator not selected. Please run 'make select-emulator' first."; \
-		exit 1; \
-	fi
-	@AVD_NAME=$(cat .emulator_name); \
-	echo "🚀 Booting emulator: $AVD_NAME..."; \
-	nohup "$ANDROID_HOME"/emulator/emulator -avd "$AVD_NAME" -no-snapshot -no-window > /dev/null 2>&1 & \
-	EMULATOR_PID=$!; \
-	trap 'echo "\n🛑 Shutting down emulator (PID: $EMULATOR_PID)..."; kill $EMULATOR_PID; rm -f .emulator_name' EXIT; \
-	echo "⏳ Waiting for emulator to connect..."; \
-	"$ANDROID_HOME"/platform-tools/adb wait-for-device; \
-	echo "⏳ Waiting for emulator to be fully booted..."; \
-	timeout=180; \
-	while [ "`"$ANDROID_HOME"/platform-tools/adb" shell getprop sys.boot_completed | tr -d '\r\n'`" != "1" ]; do \
-		if [ $timeout -le 0 ]; then \
-			echo "\n❌ Error: Timed out waiting for emulator to boot."; \
-			exit 1; \
-		fi; \
-		sleep 2; \
-		timeout=$((timeout-2)); \
-	done; \
-	echo "✅ Emulator is online."; \
-	echo "🔬 Running Gradle tests..."; \
-	./gradlew connectedDebugAndroidTest; \
-	echo "✅ UI tests completed successfully."
+	@echo "▶️ Running UI (instrumented) tests on the currently running emulator..."
+	./gradlew connectedDebugAndroidTest
+	@echo "✅ UI tests completed successfully."
 
-test-all: unit-test ui-test
+test-all: build-for-testing unit-test ui-test
 
 # === Code Style ===
 format:
