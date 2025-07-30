@@ -86,5 +86,5 @@ jobs:
         with:
           api-level: 30
           target: google_apis
-          arch: x86_64
+          arch: arm64-v8a
           script: make ui-test
