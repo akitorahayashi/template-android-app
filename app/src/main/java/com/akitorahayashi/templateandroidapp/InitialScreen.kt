@@ -16,9 +16,10 @@ import com.akitorahayashi.templateandroidapp.ui.theme.LightColorScheme
 fun InitialScreen() {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
             contentAlignment = Alignment.Center,
         ) {
             Text(text = "Hello Android!")
