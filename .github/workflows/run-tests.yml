@@ -91,8 +91,8 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
-          target: google_apis
+          target: google_apis_playstore
           arch: arm64-v8a
-          emulator-options: -no-window -no-accel
+          emulator-options: -no-window -no-snapshot
           disable-animations: true
           script: make ui-test
