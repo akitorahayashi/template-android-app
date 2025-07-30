@@ -23,11 +23,11 @@
 
 # === 設定 ===
 SHELL := /bin/bash
-.PHONY: boot run-debug run-release clean reset open build-for-testing archive unit-test ui-test test-all format format-check lint
+.PHONY: boot run-debug run-release clean reset open archive unit-test ui-test test-all format format-check lint
 
 # .envファイルが存在すれば読み込む
 ifneq (,$(wildcard ./.env))
-    include .env
+	include .env
 endif
 
 # アプリケーションIDをapp/build.gradle.ktsから動的に読み込みます
@@ -91,10 +91,6 @@ open:
 	@open -a "Android Studio" .
 
 # === ビルド ===
-build-for-testing:
-	@echo "▶️ Building app and test APKs..."
-	./gradlew assembleDebug assembleDebugAndroidTest
-
 archive:
 	@echo "▶️ Building release AAB for publishing..."
 	./gradlew bundleRelease
@@ -115,11 +111,13 @@ unit-test:
 	./gradlew testDebugUnitTest
 
 ui-test:
+	@echo "▶️ Building app and test APKs for UI tests..."
+	./gradlew assembleDebug assembleDebugAndroidTest
 	@echo "▶️ Running UI (instrumented) tests on the currently running emulator..."
 	./gradlew connectedDebugAndroidTest
 	@echo "✅ UI tests completed successfully."
 
-test-all: build-for-testing unit-test ui-test
+test-all: unit-test ui-test
 
 # === Code Style ===
 format:
