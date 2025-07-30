@@ -6,9 +6,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.isSystemInDarkTheme
+import com.akitorahayashi.templateandroidapp.ui.theme.DarkColorScheme
+import com.akitorahayashi.templateandroidapp.ui.theme.LightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
@@ -17,33 +20,33 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MaterialTheme {
+            val darkTheme = isSystemInDarkTheme()
+            val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+            MaterialTheme(colorScheme = colorScheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding),
-                    )
+                    androidx.compose.foundation.layout.Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = androidx.compose.ui.Alignment.Center
+                    ) {
+                        Text(
+                            text = "Hello Android!"
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun greeting(
-    name: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
-    )
-}
 
 @Preview(showBackground = true)
 @Composable
 fun greetingPreview() {
-    MaterialTheme {
-        greeting("Android")
+    val darkTheme = isSystemInDarkTheme()
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    MaterialTheme(colorScheme = colorScheme) {
+        Text(text = "Hello Android!")
     }
 }
