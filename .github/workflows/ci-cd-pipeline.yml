@@ -17,6 +17,5 @@ jobs:
     uses: ./.github/workflows/run-tests.yml
 
   archive:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/build-archive.yml
     secrets: inherit
