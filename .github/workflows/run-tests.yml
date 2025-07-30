@@ -18,6 +18,8 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
 
       - name: Build for testing
         run: make build-for-testing
@@ -49,6 +51,8 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
 
       - name: Run unit tests
         run: make unit-test
@@ -68,6 +72,8 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
 
       - name: Download debug APK
         uses: actions/download-artifact@v4
@@ -88,4 +94,5 @@ jobs:
           target: google_apis
           arch: arm64-v8a
           emulator-options: -no-window -no-accel
+          disable-animations: true
           script: make ui-test
