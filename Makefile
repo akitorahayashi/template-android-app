@@ -15,10 +15,15 @@
 #   make unit-test             - ユニットテストを実行
 #   make ui-test               - UIテスト（インストルメンテーションテスト）を実行
 #   make test-all              - 全てのテストを実行
+#
+# --- Code Style ---
+#   make format                - ktlintでコードをフォーマット
+#   make format-check          - ktlintでコードのフォーマットをチェック
+#   make lint                  - lintを実行
 
 # === 設定 ===
 SHELL := /bin/bash
-.PHONY: boot run-debug run-release clean reset open build-for-testing archive unit-test ui-test test-all
+.PHONY: boot run-debug run-release clean reset open build-for-testing archive unit-test ui-test test-all format format-check lint
 
 # .envファイルが存在すれば読み込む
 ifneq (,$(wildcard ./.env))
@@ -116,3 +121,16 @@ ui-test:
 
 test-all: unit-test ui-test
 	@echo "✅ All tests completed."
+
+# === Code Style ===
+format:
+	@echo "▶️ Formatting code with ktlint..."
+	./gradlew ktlintFormat
+
+format-check:
+	@echo "▶️ Checking code format with ktlint..."
+	./gradlew ktlintCheck
+
+lint:
+	@echo "▶️ Running lint..."
+	./gradlew lintDebug
