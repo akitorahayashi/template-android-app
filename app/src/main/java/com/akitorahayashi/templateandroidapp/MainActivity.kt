@@ -23,30 +23,9 @@ class MainActivity : ComponentActivity() {
             val darkTheme = isSystemInDarkTheme()
             val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
             MaterialTheme(colorScheme = colorScheme) {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    androidx.compose.foundation.layout.Box(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                        contentAlignment = androidx.compose.ui.Alignment.Center,
-                    ) {
-                        Text(
-                            text = "Hello Android!",
-                        )
-                    }
-                }
+                InitialScreen()
             }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun greetingPreview() {
-    val darkTheme = isSystemInDarkTheme()
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-    MaterialTheme(colorScheme = colorScheme) {
-        Text(text = "Hello Android!")
-    }
-}
