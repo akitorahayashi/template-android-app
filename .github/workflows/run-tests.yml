@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 jobs:
-  build_for_testing:
+  build-for-testing:
     runs-on: macos-15
     steps:
       - name: Checkout code
@@ -34,8 +34,8 @@ jobs:
           name: test-apk
           path: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 
-  unit_test:
-    needs: build_for_testing
+  unit-test:
+    needs: build-for-testing
     runs-on: macos-15
     steps:
       - name: Checkout code
@@ -53,8 +53,8 @@ jobs:
       - name: Run unit tests
         run: make unit-test
 
-  ui_test:
-    needs: build_for_testing
+  ui-test:
+    needs: build-for-testing
     runs-on: macos-15
     steps:
       - name: Checkout code
